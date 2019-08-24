@@ -72,7 +72,7 @@ def addresses(dbname, user, password, index_name):
     conn = psycopg2.connect(dbname=dbname, user=user, password=password)
     cur = conn.cursor(name='nice_view')
 
-    cur.execute('SELECT * FROM address_view LIMIT 5000')
+    cur.execute('SELECT * FROM address_view')
 
     for address_tuple in cur:
         address = Address(address_tuple).as_dict()
@@ -109,10 +109,10 @@ if __name__ == '__main__':
     settings = {
         'settings': {
             'index': {
-                'number_of_shards': '1',
-                'number_of_replicas': '0',
+                'number_of_shards': 1,
+                'number_of_replicas': 0,
                 'blocks': {
-                    'read_only_allow_delete': 'true'
+                    'read_only_allow_delete': False
                 }
             }
         }
