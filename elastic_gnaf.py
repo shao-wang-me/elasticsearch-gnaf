@@ -58,21 +58,49 @@ class Address:
         if self._dict['confidence']: self._dict['confidence'] = int(self._dict['confidence'])
 
         self._convert_geo_coordinates()
+        self._generate_formatted_address()
 
     def _convert_geo_coordinates(self):
         self._dict['geo_coordinates'] = [self._dict['longitude'], self._dict['latitude']]
         del self._dict['latitude'],
         del self._dict['longitude']
 
+    def _generate_formatted_address(self):
+        d = self._dict
+
+        # if s is None return '' else return s
+        xstr = lambda s: s or ''
+
+        lot = xstr(d['lot_number_prefix']) + xstr(d['lot_number']) + xstr(d['lot_number_suffix'])
+        flat = xstr(d['flat_type']) + xstr(d['flat_number_prefix']) + xstr(d['flat_number']) + xstr(
+            d['flat_number_suffix'])
+        level = xstr(d['level_type']) + xstr(d['level_number_prefix']) + xstr(d['level_number']) + xstr(
+            d['level_number_suffix'])
+        number_first = xstr(d['number_first_prefix']) + xstr(d['number_first']) + xstr(d['number_first_suffix'])
+        number_last = xstr(d['number_last_prefix']) + xstr(d['number_last']) + xstr(d['number_last_suffix'])
+        street = xstr(d['street_name']) + xstr(d['street_type_code']) + xstr(d['street_suffix_type'])
+        locality = xstr(d['locality_name'])
+        state = xstr(['state_abbreviation'])
+        postcode = xstr(d['postcode'])
+
+        # If no number_first, use lot number
+        # If has number_last, should be <number_first>-<number_last>, like 359-373 Collins Street
+        number = (number_first + '-' + number_last) if number_last else (number_first if number_first else lot)
+
+        return flat + ',' + number + street + ',' + locality + state + postcode
+
     def as_dict(self):
         return self._dict
 
 
-def addresses(dbname, user, password, index_name):
+def addresses(dbname, index_name, user=None, password=None, number: int = None):
     conn = psycopg2.connect(dbname=dbname, user=user, password=password)
     cur = conn.cursor(name='nice_view')
 
-    cur.execute('SELECT * FROM address_view')
+    if not number:
+        cur.execute('SELECT * FROM address_view')
+    else:
+        cur.execute('SELECT * FROM address_view LIMIT ' + str(number))
 
     for address_tuple in cur:
         address = Address(address_tuple).as_dict()
@@ -89,11 +117,13 @@ def addresses(dbname, user, password, index_name):
 
 if __name__ == '__main__':
     ELASTIC_HOST = 'localhost:9200'
-    INDEX = 'address'
+    INDEX = 'address-5000'
 
     DB_NAME = 'postgres'
-    USER = 'postgres'
-    PASSWORD = '5454'
+    USER = None
+    PASSWORD = None
+
+    NUMBER = 5000
 
     es = Elasticsearch(hosts=[ELASTIC_HOST])
 
@@ -128,7 +158,7 @@ if __name__ == '__main__':
 
     res = bulk(
         client=es,
-        actions=addresses(dbname=DB_NAME, user=USER, password=PASSWORD, index_name=INDEX),
+        actions=addresses(dbname=DB_NAME, user=USER, password=PASSWORD, index_name=INDEX, number=NUMBER),
         stats_only=False,
         raise_on_error=False
     )
