@@ -66,34 +66,53 @@ class Address:
         del self._dict['longitude']
 
     def _generate_formatted_address(self):
+        # TODO: this function is a mess
         d = self._dict
 
-        # if s is None return '' else return s
-        xstr = lambda s: s or ''
+        # if x is None return '' else return s
+        xstr = lambda x: str(x or '')
 
         lot = xstr(d['lot_number_prefix']) + xstr(d['lot_number']) + xstr(d['lot_number_suffix'])
-        flat = xstr(d['flat_type']) + xstr(d['flat_number_prefix']) + xstr(d['flat_number']) + xstr(
+        flat = xstr(d['flat_type']) + ' ' + xstr(d['flat_number_prefix']) + xstr(d['flat_number']) + xstr(
             d['flat_number_suffix'])
-        level = xstr(d['level_type']) + xstr(d['level_number_prefix']) + xstr(d['level_number']) + xstr(
+        has_flat = bool(d['flat_number'])
+        level = xstr(d['level_type']) + ' ' + xstr(d['level_number_prefix']) + xstr(d['level_number']) + xstr(
             d['level_number_suffix'])
+        has_level = bool(d['level_number'])
         number_first = xstr(d['number_first_prefix']) + xstr(d['number_first']) + xstr(d['number_first_suffix'])
         number_last = xstr(d['number_last_prefix']) + xstr(d['number_last']) + xstr(d['number_last_suffix'])
-        street = xstr(d['street_name']) + xstr(d['street_type_code']) + xstr(d['street_suffix_type'])
+        street = (xstr(d['street_name']) + ' ' + xstr(d['street_type_code']) + ' ' + xstr(
+            d['street_suffix_type'])).strip()
         locality = xstr(d['locality_name'])
-        state = xstr(['state_abbreviation'])
+        state = xstr(d['state_abbreviation'])
         postcode = xstr(d['postcode'])
 
         # If no number_first, use lot number
         # If has number_last, should be <number_first>-<number_last>, like 359-373 Collins Street
         number = (number_first + '-' + number_last) if number_last else (number_first if number_first else lot)
 
-        return flat + ',' + number + street + ',' + locality + state + postcode
+        address_line_1 = ('' + (flat + ', ') if has_flat else '' + (level + ', ') if has_level else '').strip()
+        address_line_2 = f'{number} {street}, {locality} {state} {postcode}'
+
+        address_line_1, address_line_2 = (address_line_1, address_line_2) if address_line_1 else (address_line_2, '')
+
+        formatted_address = address_line_1 + ' ' + address_line_2 if address_line_2 else address_line_1
+        print(formatted_address)  # TODO: delete me
+        d['formatted_address'] = formatted_address
 
     def as_dict(self):
         return self._dict
 
 
 def addresses(dbname, index_name, user=None, password=None, number: int = None):
+    """Generator for elasticsearch.helpers.bulk()
+    :param dbname: Postgres database name (not hostname)
+    :param index_name: Elasticsearch index name
+    :param user: Postgres user name
+    :param password: Postgres user password
+    :param number: Number of records to import, if None then import all records
+    :return: yield a record for bulk()
+    """
     conn = psycopg2.connect(dbname=dbname, user=user, password=password)
     cur = conn.cursor(name='nice_view')
 
@@ -117,13 +136,13 @@ def addresses(dbname, index_name, user=None, password=None, number: int = None):
 
 if __name__ == '__main__':
     ELASTIC_HOST = 'localhost:9200'
-    INDEX = 'address-5000'
+    INDEX = 'address-full'
 
     DB_NAME = 'postgres'
     USER = None
     PASSWORD = None
 
-    NUMBER = 5000
+    NUMBER = None
 
     es = Elasticsearch(hosts=[ELASTIC_HOST])
 
