@@ -1,3 +1,14 @@
+"""A script to import GNAF data in Postgres into Elasticsearch.
+
+Python requirements:
+    * elasticsearch
+    * psycopg2
+
+Author: Shao Wang
+Date: 2019-08-25
+"""
+
+
 from time import sleep
 
 import psycopg2
