@@ -7,4 +7,4 @@ The [Geocoded National Address File](https://data.gov.au/dataset/ds-dga-19432f89
 
 `elastic_gnaf.py` imports G-NAF from postgres to Elasticsearch.
 
-`elastic_australian_people.py` generates some dummy Australian demographic data and imports them into Elasticsearch, if you need. :blush:
+`elastic_australian_people.py` is not related to G-NAF, but generates some dummy Australian demographic data and imports them into Elasticsearch, if you need. :blush:
