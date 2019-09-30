@@ -10,6 +10,6 @@ The [Geocoded National Address File](https://data.gov.au/dataset/ds-dga-19432f89
 `elastic_australian_people.py` is not related to G-NAF, but generates some dummy Australian demographic data and imports them into Elasticsearch, if you need. :blush:
 
 ## See also
-1. [data61/gnaf](https://github.com/data61/gnaf): A set of utilities to import G-NAF into a relational database, establish a Apache Lucence (which Elasticsearch uses under the hood) index and many other things.
+1. [data61/gnaf](https://github.com/data61/gnaf): A set of utilities developed by CSIRO's Data61 to import G-NAF into a relational database, establish a Apache Lucence (which Elasticsearch uses under the hood) index and many other things.
 1. [Building real-time address search with the Australian G-NAF dataset](https://www.elastic.co/blog/realtime-address-search-with-australian-gnaf): A blog from Elastic with a similar goal as this repository but uses Microsoft F#.
 1. [aus-search](https://github.com/matthaywardwebdesign/aus-search): Uses Node.js and MongoDB to import G-NAF into Elasticsearch.
