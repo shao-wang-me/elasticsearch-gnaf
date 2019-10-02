@@ -1,7 +1,11 @@
 # Import-G-NAF-dataset-into-Elasticsearch
 Python scripts and Jupyter notebooks to import G-NAF dataset into Elasticsearch using MongoDB along with a script to generate dummy Australian demographic data and import it into Elasticsearch.
 
-The [Geocoded National Address File](https://data.gov.au/dataset/ds-dga-19432f89-dc3a-4ef3-b943-5326ef1dbecc/) (referred to as G-NAF) is Australia’s authoritative, geocoded address file. It is produced by PSMA Australia and on [their page for GNAF](https://psma.com.au/product/gnaf/), there is a [Getting Started Guide](https://psma.com.au/wp-content/uploads/2019/06/G-NAF-Getting-Started-Guide-New.pdf). You can follow the steps in the guide to import G-NAF into a relational database.
+The [Geocoded National Address File](https://data.gov.au/dataset/ds-dga-19432f89-dc3a-4ef3-b943-5326ef1dbecc/) (referred to as G-NAF) is Australia’s authoritative, geocoded address file.
+
+G-NAF is produced by PSMA Australia and on [their page for GNAF](https://psma.com.au/product/gnaf/), there is a [Getting Started Guide](https://psma.com.au/wp-content/uploads/2019/06/G-NAF-Getting-Started-Guide-New.pdf). You can follow the steps in the guide to import G-NAF into a relational database. Almost everything you need is in the guide but one thing is missing - the actual method to import the data files into a database.
+
+I import G-NAF into PostgreSQL and then import from PostgreSQL to Elasticsearch.
 
 `copy_gnaf_to_postgres.ipynb` generates PostgreSQL's COPY command to import the files into Postgres. Just copy the generated command and use in PostgreSQL.
 
