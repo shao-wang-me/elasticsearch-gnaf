@@ -1,4 +1,4 @@
-# Import-G-NAF-dataset-into-Elasticsearch
+# Import G-NAF dataset into Elasticsearch
 Python scripts and Jupyter notebooks to import G-NAF dataset into Elasticsearch using MongoDB along with a script to generate dummy Australian demographic data and import it into Elasticsearch.
 
 The [Geocoded National Address File](https://data.gov.au/dataset/ds-dga-19432f89-dc3a-4ef3-b943-5326ef1dbecc/) (referred to as G-NAF) is Australia’s authoritative, geocoded address file.
